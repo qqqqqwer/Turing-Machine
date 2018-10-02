@@ -1,7 +1,6 @@
 D:\Projects\c#\Turingo masina\Turingo masina\bin\Debug\Turingo masina.exe.config
 D:\Projects\c#\Turingo masina\Turingo masina\bin\Debug\Turingo masina.exe
 D:\Projects\c#\Turingo masina\Turingo masina\bin\Debug\Turingo masina.pdb
-D:\Projects\c#\Turingo masina\Turingo masina\obj\Debug\Turingo masina.csprojResolveAssemblyReference.cache
 D:\Projects\c#\Turingo masina\Turingo masina\obj\Debug\Turingo masina.csproj.CoreCompileInputs.cache
 D:\Projects\c#\Turingo masina\Turingo masina\obj\Debug\Turingo masina.exe
 D:\Projects\c#\Turingo masina\Turingo masina\obj\Debug\Turingo masina.pdb
@@ -12,3 +11,4 @@ C:\Users\Eimantas\Desktop\Turingo masina\Turingo masina\obj\Debug\Turingo masina
 C:\Users\Eimantas\Desktop\Turingo masina\Turingo masina\obj\Debug\Turingo masina.csproj.CoreCompileInputs.cache
 C:\Users\Eimantas\Desktop\Turingo masina\Turingo masina\obj\Debug\Turingo masina.exe
 C:\Users\Eimantas\Desktop\Turingo masina\Turingo masina\obj\Debug\Turingo masina.pdb
+D:\Projects\c#\Turingo masina\Turingo masina\obj\Debug\Turingo masina.csprojAssemblyReference.cache

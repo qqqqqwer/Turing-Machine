@@ -16,41 +16,46 @@ namespace Turingo_masina
 
     class Program
     {
-        static char[] input;
-        static int head;
-        static List<Code> code = new List<Code>();
-
-        //tiuringo masina prasideda su 0 state'u
-        static string currentMachineState = "0";
+        static List<int> heads = new List<int>();
+        static List<char[]> inputs = new List<char[]>();
+        static List<List<Code>> code = new List<List<Code>>();
 
         static void Main(string[] args)
         {
-            Console.Write("Duomenu failas: ");
-            ReadFile(Console.ReadLine());
+            ReadFile();
             Console.WriteLine("1. Paleisti masina pilnu pajegumu.\n2. Paleisti masina step by step rezimu");
-            int masina = int.Parse(Console.ReadLine());
             Console.Clear();
-            RunMachine(masina);
         }
 
-        static void ReadFile(string path)
+        static void ReadFile()
         {
-            if (!File.Exists(path))
-                Exit("Toks failas neegzistuoja");
+            Console.WriteLine("Turingo programu skaicius: ");
+            int count = int.Parse(Console.ReadLine());
 
-            using (StreamReader reader = new StreamReader(path))
+            StreamReader[] readers = new StreamReader[count];
+            
+            for (int i = 0; i < count; i++)
             {
-                head = int.Parse(reader.ReadLine());
-                input = reader.ReadLine().ToCharArray();
+                Console.WriteLine((i + 1) + " failo pavadinimas: ");
+                string path = Console.ReadLine();
 
-                while (!reader.EndOfStream)
+                if (!File.Exists(path))
+                    Exit("Toks failas neegzistuoja");
+
+                readers[i] = new StreamReader(path);
+                Console.Clear();
+
+                while (readers[i].EndOfStream)
                 {
                     try
                     {
-                        string[] line = reader.ReadLine().Split(' ');
+                        heads.Add(int.Parse(readers[i].ReadLine()));
+                        inputs.Add(readers[i].ReadLine().ToCharArray());
+
+                        string[] line = readers[i].ReadLine().Split(' ');
                         if (line.Length == 5)
                         {
-                            code.Add(new Code()
+                            code[i].Add(new Code()
                             {
                                 currentState = line[0],
                                 currentSymbol = Convert.ToChar(line[1]),
@@ -59,6 +64,10 @@ namespace Turingo_masina
                                 newState = line[4]
                             });
                         }
+                        else
+                        {
+                            code.Add(new List<Code>());
+                        }
                     }
                     catch
                     {
@@ -66,6 +75,45 @@ namespace Turingo_masina
                     }
                 }
             }
+
+            //using (StreamReader reader = new StreamReader(path))
+            //{
+            //    int count = int.Parse(reader.ReadLine());
+            //    code.Add(new List<Code>());
+            //    int index = 0;
+                
+            //    while (!reader.EndOfStream)
+            //    {
+            //        try
+            //        {
+            //            heads[index] = int.Parse(reader.ReadLine());
+            //            inputs[index] = reader.ReadLine().ToCharArray();
+
+            //            string[] line = reader.ReadLine().Split(' ');
+            //            if (line.Length == 5)
+            //            {
+            //                code[index].Add(new Code()
+            //                {
+            //                    currentState = line[0],
+            //                    currentSymbol = Convert.ToChar(line[1]),
+            //                    newSymbol = Convert.ToChar(line[2]),
+            //                    direction = Convert.ToChar(line[3]),
+            //                    newState = line[4]
+            //                });
+            //            }
+            //            else
+            //            {
+            //                code.Add(new List<Code>());
+            //                index++;
+            //            }
+            //        }
+            //        catch
+            //        {
+            //            Exit("Blogas kodo formatas");
+            //        }
+            //    } 
+
+            //}
         }
 
         static void Exit(string error)
@@ -76,8 +124,11 @@ namespace Turingo_masina
             Environment.Exit(0);
         }
 
-        static void RunMachine(int n)
+        
+        static void RunMachines()
         {
+        
+            /*
             //head's position
             int index = head - 1;
             //run the machine until it reaches halt state
@@ -126,6 +177,7 @@ namespace Turingo_masina
 
             Console.WriteLine(new string(input));
             Console.ReadLine();
+            */
         }
     }
 }
