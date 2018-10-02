@@ -19,42 +19,42 @@ namespace Turingo_masina
         static List<int> heads = new List<int>();
         static List<char[]> inputs = new List<char[]>();
         static List<List<Code>> code = new List<List<Code>>();
+        static List<string> currentMachineState = new List<string>();
 
         static void Main(string[] args)
         {
             ReadFile();
-            Console.WriteLine("1. Paleisti masina pilnu pajegumu.\n2. Paleisti masina step by step rezimu");
-            Console.Clear();
+            RunMachines();
         }
 
         static void ReadFile()
         {
-            Console.WriteLine("Turingo programu skaicius: ");
+            Console.Write("Juostu skaicius: ");
             int count = int.Parse(Console.ReadLine());
 
-            StreamReader[] readers = new StreamReader[count];
-            
             for (int i = 0; i < count; i++)
             {
-                Console.WriteLine((i + 1) + " failo pavadinimas: ");
+                code.Add(new List<Code>());
+                currentMachineState.Add("0");
+                Console.Write((i + 1) + " failo pavadinimas: ");
                 string path = Console.ReadLine();
 
                 if (!File.Exists(path))
                     Exit("Toks failas neegzistuoja");
 
-                readers[i] = new StreamReader(path);
-                Console.Clear();
-
-                while (readers[i].EndOfStream)
+                using (StreamReader reader = new StreamReader(path))
                 {
-                    try
-                    {
-                        heads.Add(int.Parse(readers[i].ReadLine()));
-                        inputs.Add(readers[i].ReadLine().ToCharArray());
+                    heads.Add(int.Parse(reader.ReadLine()));
+                    heads[i]--;
 
-                        string[] line = readers[i].ReadLine().Split(' ');
-                        if (line.Length == 5)
+                    inputs.Add(reader.ReadLine().ToCharArray());
+
+                    while (!reader.EndOfStream)
+                    {
+                        try
                         {
+                            string[] line = reader.ReadLine().Split(' ');
+                            
                             code[i].Add(new Code()
                             {
                                 currentState = line[0],
@@ -62,58 +62,16 @@ namespace Turingo_masina
                                 newSymbol = Convert.ToChar(line[2]),
                                 direction = Convert.ToChar(line[3]),
                                 newState = line[4]
-                            });
+                            }); 
                         }
-                        else
+                        catch
                         {
-                            code.Add(new List<Code>());
+                            Exit("Blogas kodo formatas");
                         }
-                    }
-                    catch
-                    {
-                        Exit("Blogas kodo formatas");
                     }
                 }
-            }
-
-            //using (StreamReader reader = new StreamReader(path))
-            //{
-            //    int count = int.Parse(reader.ReadLine());
-            //    code.Add(new List<Code>());
-            //    int index = 0;
                 
-            //    while (!reader.EndOfStream)
-            //    {
-            //        try
-            //        {
-            //            heads[index] = int.Parse(reader.ReadLine());
-            //            inputs[index] = reader.ReadLine().ToCharArray();
-
-            //            string[] line = reader.ReadLine().Split(' ');
-            //            if (line.Length == 5)
-            //            {
-            //                code[index].Add(new Code()
-            //                {
-            //                    currentState = line[0],
-            //                    currentSymbol = Convert.ToChar(line[1]),
-            //                    newSymbol = Convert.ToChar(line[2]),
-            //                    direction = Convert.ToChar(line[3]),
-            //                    newState = line[4]
-            //                });
-            //            }
-            //            else
-            //            {
-            //                code.Add(new List<Code>());
-            //                index++;
-            //            }
-            //        }
-            //        catch
-            //        {
-            //            Exit("Blogas kodo formatas");
-            //        }
-            //    } 
-
-            //}
+            }
         }
 
         static void Exit(string error)
@@ -124,60 +82,57 @@ namespace Turingo_masina
             Environment.Exit(0);
         }
 
-        
+
+        static bool programRunning()
+        {
+            for (int i = 0; i < code.Count; i++)
+            {
+                if (currentMachineState[i].ToLower() != "halt")
+                    return true;
+            }
+            return false;
+        }
+
         static void RunMachines()
         {
-        
-            /*
-            //head's position
-            int index = head - 1;
-            //run the machine until it reaches halt state
-            while (currentMachineState.ToLower() != "halt")
+
+            while (true)
             {
-                bool stateFound = false;
-                //Search for the current state's instructions for the symbol
-                for (int i = 0; i < code.Count; i++)
+                
+                for (int j = 0; j < code.Count; j++)
                 {
-                    if ((code[i].currentState == "*" || code[i].currentState == currentMachineState) && (code[i].currentSymbol == input[index] || code[i].currentSymbol == '*'))
+                    if (currentMachineState[j].ToLower() != "halt")
                     {
-                        //Console.WriteLine("Dabartine busena: " + currentMachineState);
-                        Console.WriteLine(new string(input));
-                        if (n != 1)
+                        bool stateFound = false;
+                        for (int i = 0; i < code[j].Count; i++)
                         {
-                            for (int j = 1; j < index; j++)
-                                Console.Write(" ");
-                            Console.Write("^");
-                            Thread.Sleep(700);
+                            if ((code[j][i].currentState == "*" || code[j][i].currentState == currentMachineState[j]) && (code[j][i].currentSymbol == inputs[j][heads[j]] || code[j][i].currentSymbol == '*'))
+                            {
+                                stateFound = true;
+
+                                if (code[j][i].newSymbol != '*')
+                                    inputs[j][heads[j]] = code[j][i].newSymbol;
+
+                                if (code[j][i].direction.ToString().ToLower() == "r")
+                                    heads[j]++;
+
+                                if (code[j][i].direction.ToString().ToLower() == "l")
+                                    heads[j]--;
+
+                                if (code[j][i].newState != "*")
+                                    currentMachineState[j] = code[j][i].newState;
+
+                                Console.WriteLine(new string(inputs[j]));
+                                break;
+                            }
                         }
-                        stateFound = true;
 
-                        if (code[i].newSymbol != '*')
-                            input[index] = code[i].newSymbol;
-
-                        if (code[i].direction.ToString().ToLower() == "r")
-                            index++;
-
-                        else if (code[i].direction.ToString().ToLower() == "l")
-                            index--;
-
-                        if (index < 0 || index >= input.Length)
-                            Exit(new string(input) + "\n\nMasina isejo is juostos ribu");
-
-                        if (code[i].newState != "*")
-                            currentMachineState = code[i].newState;
-
-                        break;
+                        //if not found
+                        if (!stateFound)
+                            Exit(String.Format(new string(inputs[j]) + "\n\nNera instrukciju simboliui {0} busenoje {1}. {2} Masina", inputs[j][heads[j]], currentMachineState[j], j+1));
                     }
                 }
-
-                //if not found
-                if (!stateFound)
-                    Exit(String.Format(new string(input) + "\n\nNera instrukciju simboliui {0} busenoje {1}", input[index], currentMachineState));
             }
-
-            Console.WriteLine(new string(input));
-            Console.ReadLine();
-            */
         }
     }
 }
